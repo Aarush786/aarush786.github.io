@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Analysis and Management - Aviva Canada</title>
+  <style>
+    :root {
+      --aviva-yellow: #FFDB00;
+      --aviva-blue: #004FB6;
+      --aviva-light-blue: #d0e0f5;
+      --aviva-dark-blue: #002F6C;
+      --aviva-grey: #58595B;
+      --aviva-light-grey: #F2F2F2;
+      --high-risk: #B60041;
+      --medium-risk: #FF6200;
+      --low-risk: #008030;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    
+    body {
+      background-color: #FFFFFF;
+      color: var(--aviva-grey);
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--aviva-yellow);
+      padding-bottom: 15px;
+    }
+    
+    .header h1 {
+      color: var(--aviva-blue);
+      margin-bottom: 10px;
+    }
+    
+    .logo {
+      height: 50px;
+      margin-bottom: 15px;
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .risks-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      width: 100%;
+    }
+    
+    .section {
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .section-header {
+      border-bottom: 2px solid var(--aviva-yellow);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .external-risks .section-header h2 {
+      color: var(--aviva-blue);
+    }
+    
+    .internal-risks .section-header h2 {
+      color: var(--aviva-dark-blue);
+    }
+    
+    .management .section-header h2 {
+      color: var(--aviva-blue);
+    }
+    
+    .risk-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed #ddd;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .risk-item:hover {
+      background-color: var(--aviva-light-grey);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+    
+    .risk-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+      background-color: var(--aviva-light-blue);
+      color: white;
+      font-weight: bold;
+    }
+    
+    .external-risks .risk-icon {
+      background-color: var(--aviva-blue);
+    }
+    
+    .internal-risks .risk-icon {
+      background-color: var(--aviva-dark-blue);
+    }
+    
+    .risk-content {
+      flex: 1;
+    }
+    
+    .risk-content h3 {
+      margin-bottom: 8px;
+      color: var(--aviva-grey);
+      display: flex;
+      align-items: center;
+    }
+    
+    .risk-content p {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.4;
+    }
+    
+    .risk-level {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+    
+    .high-high {
+      background-color: var(--high-risk);
+    }
+    
+    .high-medium {
+      background-color: var(--medium-risk);
+    }
+    
+    .medium-high {
+      background-color: var(--medium-risk);
+    }
+    
+    .medium-medium {
+      background-color: var(--medium-risk);
+    }
+    
+    .medium-low {
+      background-color: var(--low-risk);
+    }
+    
+    .heatmap-section {
+      width: 100%;
+    }
+    
+    .heatmap-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    
+    .heatmap {
+      display: grid;
+      grid-template-columns: auto repeat(3, 90px);
+      grid-template-rows: auto repeat(3, 90px);
+      gap: 2px;
+      margin-top: 20px;
+    }
+    
+    .heatmap-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+      transition: transform 0.3s, box-shadow 0.3s;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+    }
+    
+    .heatmap-cell:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+    
+    .heatmap-header {
+      background-color: var(--aviva-light-grey);
+      font-weight: bold;
+      color: var(--aviva-grey);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header-impact {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      padding: 10px;
+    }
+    
+    .risks-list {
+      position: relative;
+    }
+    
+    .dropdown-content {
+      display: none;
+      background-color: white;
+      width: 100%;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      border-radius: 4px;
+      padding: 15px;
+      margin: 10px 0 20px 0;
+      position: relative;
+      border-left: 4px solid var(--aviva-yellow);
+    }
+    
+    .dropdown.active + .dropdown-content {
+      display: block;
+    }
+    
+    .dropdown-content h4 {
+      margin-bottom: 8px;
+      color: var(--aviva-blue);
+    }
+    
+    .dropdown-content p {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    
+    .risk-id {
+      font-size: 0.75rem;
+      background-color: var(--aviva-yellow);
+      color: var(--aviva-dark-blue);
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 8px;
+    }
+    
+    .strategy-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed #ddd;
+      transition: background-color 0.2s;
+      padding: 10px;
+      border-radius: 5px;
+      position: relative;
+    }
+    
+    .strategy-item:hover {
+      background-color: var(--aviva-light-grey);
+      cursor: pointer;
+    }
+    
+    .strategy-item h3 {
+      color: var(--aviva-blue);
+      margin-bottom: 8px;
+    }
+    
+    .strategy-item p {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.4;
+    }
+    
+    .risk-legend {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+      gap: 20px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      border: 1px solid #ddd;
+    }
+    
+    @media (max-width: 920px) {
+      .risks-container {
+        flex-direction: column;
+      }
+      
+      .section {
+        min-width: 100%;
+      }
+      
+      .heatmap {
+        grid-template-columns: auto repeat(3, 70px);
+        grid-template-rows: auto repeat(3, 70px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="avivalogo.svg" alt="Aviva Canada Logo" class="logo" />
+    <h1>Risk Analysis and Management</h1>
+  </div>
+  
+  <div class="container">
+    <div class="risks-container">
+      <div class="section external-risks">
+        <div class="section-header">
+          <h2>External Risks</h2>
+        </div>
+        
+        <div class="risks-list">
+          <div class="risk-item dropdown" id="risk-R5">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11.99H19C18.47 16.11 15.72 19.78 12 20.93V12H5V6.3L12 3.19V11.99Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Cybersecurity Threats <span class="risk-id">R5</span></h3>
+              <p>AI improves efficiency but also increases data breach risks.</p>
+            </div>
+            <div class="risk-level high-high">HH</div>
+          </div>
+          <div class="dropdown-content" id="content-R5">
+            <h4>Cybersecurity Threats (R5)</h4>
+            <p><strong>Impact:</strong> High</p>
+            <p><strong>Likelihood:</strong> High</p>
+            <p>Advanced AI systems increase efficiency but create new attack vectors, potentially exposing sensitive customer and business data.</p>
+          </div>
+          
+          <div class="risk-item dropdown" id="risk-R4">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Market Competition <span class="risk-id">R4</span></h3>
+              <p>Inflation, tariffs, and intense competition pressure profitability.</p>
+            </div>
+            <div class="risk-level high-medium">HM</div>
+          </div>
+          <div class="dropdown-content" id="content-R4">
+            <h4>Market Competition (R4)</h4>
+            <p><strong>Impact:</strong> High</p>
+            <p><strong>Likelihood:</strong> Medium</p>
+            <p>Economic pressures combined with disruptive competitors are forcing traditional insurance models to adapt or lose market share.</p>
+          </div>
+          
+          <div class="risk-item dropdown" id="risk-R3">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM19 11C19 15.5 16.2 19.69 12 21C7.8 19.69 5 15.5 5 11V6.3L12 3.19L19 6.3V11ZM7.37 13.5L10.5 16.63L17.13 10L15.71 8.58L10.5 13.79L8.79 12.08L7.37 13.5Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Regulatory Compliance <span class="risk-id">R3</span></h3>
+              <p>Stricter laws and compliance challenges add complexity.</p>
+            </div>
+            <div class="risk-level high-medium">HM</div>
+          </div>
+          <div class="dropdown-content" id="content-R3">
+            <h4>Regulatory Compliance (R3)</h4>
+            <p><strong>Impact:</strong> High</p>
+            <p><strong>Likelihood:</strong> Medium</p>
+            <p>Evolving regulatory landscape requires constant monitoring and adaptation, creating operational overhead and potential compliance gaps.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section internal-risks">
+        <div class="section-header">
+          <h2>Internal Risks</h2>
+        </div>
+        
+        <div class="risks-list">
+          <div class="risk-item dropdown" id="risk-R7">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Employee Resistance <span class="risk-id">R7</span></h3>
+              <p>High turnover and skill gaps can hinder innovation.</p>
+            </div>
+            <div class="risk-level medium-low">ML</div>
+          </div>
+          <div class="dropdown-content" id="content-R7">
+            <h4>Employee Resistance (R7)</h4>
+            <p><strong>Impact:</strong> Medium</p>
+            <p><strong>Likelihood:</strong> Low</p>
+            <p>Digital transformation can create challenges in workforce adaptation, including training needs and potential resistance to change.</p>
+          </div>
+          
+          <div class="risk-item dropdown" id="risk-R6">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Customer Trust Issues <span class="risk-id">R6</span></h3>
+              <p>AI-driven policies may face skepticism.</p>
+            </div>
+            <div class="risk-level medium-high">MH</div>
+          </div>
+          <div class="dropdown-content" id="content-R6">
+            <h4>Customer Trust Issues (R6)</h4>
+            <p><strong>Impact:</strong> Medium</p>
+            <p><strong>Likelihood:</strong> High</p>
+            <p>Customer concerns about AI decision-making and data privacy can impact adoption of new services and retention rates.</p>
+          </div>
+          
+          <div class="risk-item dropdown" id="risk-R9">
+            <div class="risk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="risk-content">
+              <h3>Digital Strategy Failure <span class="risk-id">R9</span></h3>
+              <p>Slow AI adoption could lead to a competitive disadvantage.</p>
+            </div>
+            <div class="risk-level medium-medium">MM</div>
+          </div>
+          <div class="dropdown-content" id="content-R9">
+            <h4>Digital Strategy Failure (R9)</h4>
+            <p><strong>Impact:</strong> Medium</p>
+            <p><strong>Likelihood:</strong> Medium</p>
+            <p>Inconsistent digital transformation or technical debt can create operational bottlenecks and slow innovation cycles.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section management">
+      <div class="section-header">
+        <h2>Risk Management Strategies</h2>
+      </div>
+      
+      <div class="risks-list">
+        <div class="strategy-item dropdown" id="strategy-1">
+          <h3>Strengthen Cybersecurity & Compliance</h3>
+          <p>Enhance IT security measures and adhere to evolving regulations.</p>
+        </div>
+        <div class="dropdown-content" id="content-strategy-1">
+          <h4>Strengthening Security</h4>
+          <p>Implementing advanced threat detection, regular security audits, and comprehensive compliance frameworks to mitigate both cybersecurity and regulatory risks.</p>
+        </div>
+        
+        <div class="strategy-item dropdown" id="strategy-2">
+          <h3>Invest in AI Innovation</h3>
+          <p>Focus on customer-centric solutions to stay ahead in the market.</p>
+        </div>
+        <div class="dropdown-content" id="content-strategy-2">
+          <h4>Innovation Focus</h4>
+          <p>Developing transparent AI systems that prioritize explainability to build customer trust while maintaining competitive advantage through ethical technology adoption.</p>
+        </div>
+        
+        <div class="strategy-item dropdown" id="strategy-3">
+          <h3>Reskill and Balance Workforce</h3>
+          <p>Implement training programs and maintain AI/human support balance.</p>
+        </div>
+        <div class="dropdown-content" id="content-strategy-3">
+          <h4>Workforce Development</h4>
+          <p>Creating comprehensive training programs to bridge skill gaps while maintaining the human element in customer interactions to enhance trust and satisfaction.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section heatmap-section">
+      <div class="section-header">
+        <h2>Risk Heat Map</h2>
+      </div>
+      
+      <div class="heatmap-container">
+        <div class="heatmap">
+          <!-- Headers -->
+          <div class="heatmap-cell heatmap-header"></div>
+          <div class="heatmap-cell heatmap-header">Low<br>Likelihood</div>
+          <div class="heatmap-cell heatmap-header">Medium<br>Likelihood</div>
+          <div class="heatmap-cell heatmap-header">High<br>Likelihood</div>
+          
+          <!-- High Impact Row -->
+          <div class="heatmap-cell heatmap-header">
+            <span class="header-impact">High Impact</span>
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--medium-risk);">-</div>
+          <div class="heatmap-cell" style="background-color: var(--medium-risk);">
+            R1, R3, R4
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--high-risk);">
+            R5
+          </div>
+          
+          <!-- Medium Impact Row -->
+          <div class="heatmap-cell heatmap-header">
+            <span class="header-impact">Medium Impact</span>
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--low-risk);">
+            R7
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--medium-risk);">
+            R2, R8, R9
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--medium-risk);">
+            R6
+          </div>
+          
+          <!-- Low Impact Row -->
+          <div class="heatmap-cell heatmap-header">
+            <span class="header-impact">Low Impact</span>
+          </div>
+          <div class="heatmap-cell" style="background-color: var(--low-risk);">-</div>
+          <div class="heatmap-cell" style="background-color: var(--low-risk);">-</div>
+          <div class="heatmap-cell" style="background-color: var(--low-risk);">-</div>
+        </div>
+        
+        <div class="risk-legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--high-risk);"></div>
+            <span>High Risk</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--medium-risk);"></div>
+            <span>Medium Risk</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--low-risk);"></div>
+            <span>Low Risk</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Make risk items clickable to toggle dropdown
+      const riskItems = document.querySelectorAll('.dropdown');
+      
+      riskItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const id = this.id;
+          const contentId = id.replace('risk-', 'content-').replace('strategy-', 'content-strategy-');
+          const contentElement = document.getElementById(contentId);
+          
+          // Check if this dropdown is already active
+          const isActive = this.classList.contains('active');
+          
+          // Close all dropdowns
+          document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+          
+          // If it wasn't active before, make it active
+          if (!isActive) {
+            this.classList.add('active');
+          }
+        });
+      });
+      
+      // Close dropdowns when clicking elsewhere
+      document.addEventListener('click', function(e) {
+        // If click is not on a dropdown or its content, close all dropdowns
+        if (!e.target.closest('.dropdown') && !e.target.closest('.dropdown-content')) {
+          document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+        }
+      });
+      
+      // Highlight related risks on heatmap cell hover
+      const heatmapCells = document.querySelectorAll('.heatmap-cell:not(.heatmap-header)');
+      
+      heatmapCells.forEach(cell => {
+        cell.addEventListener('mouseenter', function() {
+          const cellContent = this.textContent.trim();
+          if (cellContent !== '-') {
+            const riskIds = cellContent.split(',').map(id => id.trim());
+            
+            riskIds.forEach(riskId => {
+              const riskItem = document.getElementById('risk-' + riskId);
+              if (riskItem) {
+                riskItem.style.backgroundColor = '#FFDB00';
+                riskItem.style.transform = 'translateY(-3px)';
+                riskItem.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.1)';
+              }
+            });
+          }
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+          document.querySelectorAll('.risk-item').forEach(item => {
+            item.style.backgroundColor = '';
+            item.style.transform = '';
+            item.style.boxShadow = '';
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
